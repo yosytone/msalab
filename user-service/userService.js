@@ -5,7 +5,6 @@ const User = require("./models/User");
 const app = express();
 app.use(express.json());
 
-// Подключение к MongoDB через имя сервиса (docker-compose)
 mongoose.connect("mongodb://mongo:27017/users", { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.post("/users", async (req, res) => {

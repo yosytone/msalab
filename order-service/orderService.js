@@ -6,7 +6,6 @@ const Order = require("./models/Order");
 const app = express();
 app.use(express.json());
 
-// Подключение к MongoDB через имя сервиса (docker-compose)
 mongoose.connect("mongodb://mongo:27017/orders", { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.post("/orders", async (req, res) => {
@@ -24,11 +23,19 @@ app.get("/orders/:id", async (req, res) => {
     if (!order) return res.status(404).json({ error: "Order not found" });
 
     try {
-        // Используем `user-service` вместо `localhost`
         const user = await axios.get(`http://user-service:3001/users/${order.userId}`);
         res.json({ order, user: user.data });
     } catch (error) {
         res.json({ order, user: "User not found" });
+    }
+});
+
+app.get("/orders", async (req, res) => {
+    try {
+        const orders = await Order.find();
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
